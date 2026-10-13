@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Denticon-style demo - D4C Dental Brands</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#1d2b3a;background:#e7eff8}
+a{color:#1a5fa5;text-decoration:none;cursor:pointer}a:hover{text-decoration:underline}
+#menubar{background:#102f52;color:#fff;display:flex;align-items:center;height:30px;padding:0 10px;position:relative;z-index:50}
+#menubar .mi{padding:0 11px;height:30px;line-height:30px;cursor:pointer;position:relative;white-space:nowrap}
+#menubar .mi:hover{background:#1d4b7e}
+#menubar .dd{display:none;position:absolute;top:30px;left:0;background:#fff;color:#1d2b3a;min-width:210px;border:1px solid #9db6d2;box-shadow:0 4px 10px rgba(0,0,0,.25)}
+#menubar .mi:hover .dd{display:block}
+#menubar .dd div{padding:7px 12px;border-bottom:1px solid #edf2f8;cursor:pointer}
+#menubar .dd div:hover{background:#dcebfa}
+#menubar .dd div.off{color:#9aa8b8}
+#menubar .sp{flex:1}
+#menubar select{font-size:12px;padding:2px;margin-left:6px;min-width:250px}
+#menubar .off-l{font-weight:bold}
+#toolbar{background:linear-gradient(#4a9be0,#3a88cf);display:flex;align-items:center;gap:2px;padding:4px 8px;height:40px;overflow:hidden}
+#toolbar .ic{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:4px;cursor:pointer;position:relative;flex:0 0 auto}
+#toolbar .ic:hover{background:rgba(255,255,255,.22)}
+#toolbar .ic.act{background:rgba(255,255,255,.32)}
+#toolbar .ic.dis{opacity:.75;cursor:default}
+#toolbar svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#toolbar .badge{position:absolute;top:0;right:0;background:#e5483b;color:#fff;font-size:9px;border-radius:8px;padding:0 4px;line-height:13px;font-weight:bold}
+#toolbar .sep{flex:1}
+#searchbox{position:relative;margin-right:6px}
+#searchbox input{width:210px;padding:5px 8px;border:1px solid #b9cde3;border-radius:3px;font-size:12px}
+#results{position:absolute;top:30px;left:0;width:300px;background:#fff;border:1px solid #9db6d2;z-index:60;box-shadow:0 4px 10px rgba(0,0,0,.25);max-height:300px;overflow:auto}
+#results div{padding:7px 10px;border-bottom:1px solid #edf2f8;cursor:pointer}#results div:hover{background:#dcebfa}
+#strip{background:linear-gradient(#3b86c6,#2d74b5);color:#fff;padding:7px 12px;display:flex;gap:14px;align-items:center;font-size:12px;border-top:1px solid #6aa7de}
+#strip .av{width:46px;height:46px;border-radius:5px;background:#cfe3f6;color:#1d4f86;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;border:2px solid #e8f2fb;flex:0 0 auto}
+#strip .nm{font-size:14px;font-weight:bold}
+#strip .col{min-width:160px;line-height:17px}
+#strip .col b{color:#d9ebff;font-weight:normal;margin-right:4px}
+#strip a{color:#fff;text-decoration:underline}
+#strip .alert{background:#d93b30;color:#fff;padding:2px 7px;border-radius:3px;font-weight:bold;margin-top:2px;display:inline-block}
+#titlebar{background:#2a6aa6;color:#fff;padding:4px 12px;font-weight:bold;display:flex;font-size:12px}
+#titlebar .r{margin-left:auto;font-weight:normal;font-size:11px}
+#view{padding:10px 12px 60px}
+#foot{text-align:center;color:#51657b;font-size:11px;padding:8px;border-top:1px solid #c5d6e8;background:#dfe9f4;position:fixed;bottom:0;left:0;right:0;z-index:5}
+.card{background:#fff;border:1px solid #b9cde3;margin-bottom:10px}
+.card>.hd{background:#3a82c4;color:#fff;font-weight:bold;padding:4px 8px;font-size:11px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hd .btns{display:flex;gap:6px}
+.btn{background:#2f78bd;color:#fff;border:1px solid #1d5a96;padding:3px 9px;font-size:11px;font-weight:bold;cursor:pointer;border-radius:2px;text-transform:uppercase}
+.btn:hover{background:#3b8ad2}.btn.dis{opacity:.5;cursor:default}
+.btn.light{background:#eaf3fc;color:#1d4f86;border-color:#9db6d2}.btn.red{background:#c63b30;border-color:#962a21}.btn.grn{background:#2e8b57;border-color:#1f6a40}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kv{display:grid;grid-template-columns:130px 1fr 130px 1fr;border-top:1px solid #e4edf6}
+.kv div{padding:5px 8px;border-bottom:1px solid #e4edf6;min-height:24px}.kv .k{color:#51657b;background:#f4f8fc}
+.kv .red{color:#c0281d;font-weight:bold}
+table.t{border-collapse:collapse;width:100%}
+table.t th{background:#3a82c4;color:#fff;text-align:left;padding:4px 8px;font-size:11px;border:1px solid #2a6aa6}
+table.t td{padding:4px 8px;border-bottom:1px solid #e4edf6}
+table.t tr:nth-child(even) td{background:#f5f9fd}
+table.t tr.canc td{color:#8a97a6;text-decoration:line-through}
+.pill{display:inline-block;padding:1px 7px;border-radius:9px;font-size:10px;font-weight:bold}
+.p-s{background:#dcebfa;color:#1d4f86}.p-c{background:#d4f0de;color:#1c6b3d}.p-x{background:#f6d4d0;color:#9a2a20}.p-n{background:#fdecc8;color:#8a5a00}
+.tabs{display:flex;gap:2px;padding:6px 8px 0;border-bottom:2px solid #3a82c4;background:#eef4fb}
+.tabs div{padding:5px 11px;background:#d5e5f5;cursor:pointer;font-size:11px;font-weight:bold;color:#1d4f86;border:1px solid #b9cde3;border-bottom:0}
+.tabs div.on{background:#3a82c4;color:#fff}
+/* scheduler */
+.sbar{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.sbar .dt{font-weight:bold;font-size:14px;color:#17406d;min-width:230px;text-align:center}
+.sched{display:flex;gap:10px;align-items:flex-start}
+.gridwrap{background:#fff;border:1px solid #b9cde3;overflow:auto;flex:1;max-height:640px}
+.sg{position:relative;display:flex;min-width:760px}
+.tcol{width:58px;flex:0 0 58px;background:#f2f7fc;border-right:1px solid #c9d9ea}
+.tcol div{height:20px;font-size:10px;color:#51657b;text-align:right;padding-right:5px;border-bottom:1px dotted #dbe6f2}
+.tcol div.hr{border-bottom:1px solid #b9cde3;color:#17406d;font-weight:bold}
+.tcol .hdr{height:32px;border-bottom:1px solid #9db6d2}
+.ocol{flex:1;min-width:130px;position:relative;border-right:1px solid #c9d9ea}
+.ocol .hdr{height:32px;background:#3a82c4;color:#fff;font-size:11px;font-weight:bold;text-align:center;padding-top:3px;line-height:13px;border-bottom:1px solid #2a6aa6;position:sticky;top:0;z-index:3}
+.ocol .cell{height:20px;border-bottom:1px dotted #dbe6f2;cursor:pointer}
+.ocol .cell.hr{border-bottom:1px solid #c9d9ea}
+.ocol .cell:hover{background:#eaf4ff}.ocol .cell.closed{background:repeating-linear-gradient(45deg,#eef1f4,#eef1f4 5px,#e4e8ec 5px,#e4e8ec 10px);cursor:default}
+.ap{position:absolute;left:2px;right:2px;border:1px solid #6f8fb0;border-radius:3px;padding:2px 4px;font-size:10px;line-height:12px;overflow:hidden;cursor:pointer;z-index:2;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.ap b{display:block;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ap.sel{outline:2px solid #17406d}
+.ap.flash{animation:fl 1.4s ease-in-out 4;border:2px solid #e08a00}
+@keyframes fl{0%,100%{box-shadow:0 0 0 0 rgba(224,138,0,.0)}50%{box-shadow:0 0 0 5px rgba(224,138,0,.55)}}
+.sidep{width:300px;flex:0 0 300px;background:#fff;border:1px solid #b9cde3}
+.sidep .ph{background:#2f78bd;color:#fff;padding:7px 10px;font-weight:bold}
+.sidep .pb{padding:9px 10px}
+.sidep .row{display:flex;gap:8px;align-items:center;padding:7px 4px;border-bottom:1px solid #eaf0f7;cursor:pointer}.sidep .row:hover{background:#f0f6fc}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:10px;margin-bottom:6px}.legend i{display:inline-block;width:11px;height:11px;border:1px solid #6f8fb0;margin-right:4px;vertical-align:middle}
+/* modal / toast */
+#modalbg{display:none;position:fixed;inset:0;background:rgba(10,30,55,.55);z-index:100;align-items:flex-start;justify-content:center;padding-top:50px;overflow:auto}
+#modalbg.on{display:flex}
+#modal{background:#fff;width:720px;max-width:94vw;border:1px solid #17406d;box-shadow:0 10px 30px rgba(0,0,0,.4);margin-bottom:40px}
+#modal .mh{background:#2a6aa6;color:#fff;padding:8px 12px;font-weight:bold;display:flex;justify-content:space-between}
+#modal .mb{padding:12px}
+#modal .mf{padding:10px 12px;border-top:1px solid #dbe6f2;display:flex;gap:8px;justify-content:flex-end;background:#f4f8fc}
+.fld{display:flex;gap:10px;align-items:center;margin-bottom:8px}.fld label{width:130px;color:#51657b;font-weight:bold}
+.fld select,.fld input,.fld textarea{flex:1;padding:5px;border:1px solid #9db6d2;font-size:12px;font-family:inherit}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-height:210px;overflow:auto;margin:6px 0}
+.slot{border:1px solid #9db6d2;padding:6px;border-radius:3px;cursor:pointer;background:#f5f9fd;font-size:11px}.slot:hover{background:#dcebfa}.slot.on{background:#2f78bd;color:#fff;border-color:#17406d}
+.slot.bad{opacity:.45;cursor:not-allowed}
+.warn{background:#fff3cd;border:1px solid #e6c667;padding:7px 9px;margin:6px 0;color:#6b4e00}
+.ok{background:#e1f5e8;border:1px solid #8fcea6;padding:7px 9px;margin:6px 0;color:#1c5a35}
+#toast{position:fixed;right:16px;top:74px;background:#17406d;color:#fff;padding:10px 14px;border-radius:4px;z-index:200;display:none;max-width:380px;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+#toast.on{display:block}
+/* comms */
+.cm{display:flex;gap:10px}.cm .list{width:290px;background:#fff;border:1px solid #b9cde3;max-height:560px;overflow:auto}
+.cm .th{padding:8px 10px;border-bottom:1px solid #e4edf6;cursor:pointer}.cm .th:hover,.cm .th.on{background:#e3effb}
+.cm .conv{flex:1;background:#fff;border:1px solid #b9cde3;padding:10px;min-height:420px;display:flex;flex-direction:column}
+.msg{max-width:78%;margin:6px 0 6px auto;background:#eef4fb;border:1px solid #cddcec;border-radius:6px;padding:7px 9px}
+.msg small{display:block;color:#6a7d92;font-size:10px;margin-bottom:3px}
+.msg.in{margin:6px auto 6px 0;background:#e8f7ee}
+.comp{margin-top:auto;display:flex;gap:6px;padding-top:10px}.comp input{flex:1;padding:7px;border:1px solid #9db6d2}
+.redtxt{color:#c0281d;font-size:11px;margin-top:3px}
+/* chart */
+.chart{background:#fff;border:1px solid #b9cde3;padding:10px}
+.teeth{display:flex;gap:4px;justify-content:center;margin:6px 0;padding:14px 6px;background:#f9d7dc}
+.tooth{width:46px;text-align:center}.tooth .n{background:#9db6d2;color:#fff;font-size:10px;font-weight:bold;padding:1px 0;margin-bottom:3px}
+.tooth .cr{height:46px;border-radius:12px 12px 6px 6px;background:linear-gradient(#fff,#e7e1d4);border:1px solid #b7ab97;margin:0 6px}
+.tooth.m .cr{background:repeating-linear-gradient(45deg,#fff,#fff 4px,#f3c6c1 4px,#f3c6c1 8px);border-style:dashed}
+.kbd{font-family:Consolas,monospace;font-size:11px;background:#f3f6fa;border:1px solid #d9e3ee;padding:2px 5px}
+/* demo drawer */
+#demotab{position:fixed;left:0;bottom:34px;background:#102f52;color:#fff;padding:6px 10px;font-size:11px;cursor:pointer;z-index:90;border-radius:0 6px 0 0}
+#drawer{display:none;position:fixed;left:0;bottom:62px;width:560px;max-width:96vw;max-height:70vh;background:#fff;border:1px solid #17406d;z-index:91;box-shadow:0 6px 24px rgba(0,0,0,.4);overflow:auto}
+#drawer.on{display:block}
+#drawer .dh{background:#102f52;color:#fff;padding:7px 10px;font-weight:bold;display:flex;justify-content:space-between}
+#drawer .db{padding:10px}
+#drawer h4{margin:10px 0 6px;color:#17406d}
+#drawer pre{background:#f3f6fa;border:1px solid #d9e3ee;padding:6px;white-space:pre-wrap;font-size:10px;margin:2px 0 8px}
+.mini{font-size:11px}.mini td,.mini th{padding:3px 5px;border-bottom:1px solid #e4edf6;vertical-align:top}
+</style></head>
+<body>
+<div id="menubar"></div><div id="toolbar"></div><div id="strip" style="display:none"></div><div id="titlebar"></div>
+<div id="view"></div>
+<div id="foot">Demo environment: simulated Denticon-style screens with test data for the D4C demonstration. Not connected to production Denticon.</div>
+<div id="demotab" data-act="drawer">Demo controls</div><div id="drawer"></div>
+<div id="modalbg"><div id="modal"></div></div><div id="toast"></div>
+<script>// ===== D4C demo data + scheduling logic (no DOM) =====
+const D4C = (function () {
+  const OFFICES = {
+    '101': { id: '101', name: 'Cedar Grove Kids Dental', addr: '1200 Cedar Grove Blvd', city: 'Franklin', st: 'TN', zip: '37067', phone: '615-555-0101',
+      hours: { 1: [8, 17], 2: [8, 17], 3: [8, 17], 4: [8, 17], 5: [8, 13] },
+      ops: [ { id: 'OP1', label: 'OP 1', prov: 'ruiz', kind: 'doc' }, { id: 'OP2', label: 'OP 2', prov: 'hale', kind: 'doc' },
+             { id: 'H1', label: 'HYG 1', prov: 'lopez', kind: 'hyg' }, { id: 'H2', label: 'HYG 2', prov: 'pike', kind: 'hyg' },
+             { id: 'EMG', label: 'EMG', prov: 'ruiz', kind: 'emg' } ] },
+    '102': { id: '102', name: 'Brentwood Kids Dental', addr: '410 Maryland Farms Dr', city: 'Brentwood', st: 'TN', zip: '37027', phone: '615-555-0102',
+      hours: { 1: [8, 17], 2: [8, 17], 3: [8, 17], 4: [8, 17], 5: [8, 13] },
+      ops: [ { id: 'OP1', label: 'OP 1', prov: 'nair', kind: 'doc' }, { id: 'OP2', label: 'OP 2', prov: 'hale', kind: 'doc' },
+             { id: 'H1', label: 'HYG 1', prov: 'ortiz', kind: 'hyg' } ] },
+    '103': { id: '103', name: 'Murfreesboro Kids Dental', addr: '88 Memorial Blvd', city: 'Murfreesboro', st: 'TN', zip: '37130', phone: '615-555-0103',
+      hours: { 1: [8, 17], 2: [8, 17], 3: [8, 17], 4: [8, 17], 5: [8, 13] },
+      ops: [ { id: 'OP1', label: 'OP 1', prov: 'kim', kind: 'doc' }, { id: 'H1', label: 'HYG 1', prov: 'webb', kind: 'hyg' } ] }
+  };
+  const PROVIDERS = {
+    ruiz: { id: 'ruiz', name: 'Dr. Elena Ruiz', short: 'RUIZ DDS', minAge: 0, maxAge: 17, role: 'DDS' },
+    hale: { id: 'hale', name: 'Dr. Marcus Hale', short: 'HALE DMD', minAge: 7, maxAge: 17, role: 'DMD' },
+    nair: { id: 'nair', name: 'Dr. Priya Nair', short: 'NAIR DDS', minAge: 0, maxAge: 6, role: 'DDS' },
+    kim: { id: 'kim', name: 'Dr. Grace Kim', short: 'KIM DDS', minAge: 0, maxAge: 17, role: 'DDS' },
+    lopez: { id: 'lopez', name: 'Tara Lopez, RDH', short: 'LOPEZ RDH', minAge: 0, maxAge: 17, role: 'RDH' },
+    pike: { id: 'pike', name: 'Jordan Pike, RDH', short: 'PIKE RDH', minAge: 0, maxAge: 17, role: 'RDH' },
+    ortiz: { id: 'ortiz', name: 'Sam Ortiz, RDH', short: 'ORTIZ RDH', minAge: 0, maxAge: 17, role: 'RDH' },
+    webb: { id: 'webb', name: 'Dana Webb, RDH', short: 'WEBB RDH', minAge: 0, maxAge: 17, role: 'RDH' }
+  };
+  const TYPES = {
+    REC: { code: 'REC', label: 'Recare - Cleaning & Exam', dur: 45, kind: 'hyg', color: '#bfe8d8' },
+    NPE: { code: 'NPE', label: 'New Patient Exam', dur: 60, kind: 'doc', color: '#f6c9dd' },
+    LIM: { code: 'LIM', label: 'Limited Exam', dur: 30, kind: 'doc', color: '#d9d2f2' },
+    EMG: { code: 'EMG', label: 'Emergency Exam', dur: 30, kind: 'emg', color: '#f7b4ab' },
+    ORT: { code: 'ORT', label: 'Ortho Consultation', dur: 60, kind: 'doc', color: '#fbd9a6' },
+    FIL: { code: 'FIL', label: 'Restorative - Fillings', dur: 60, kind: 'doc', color: '#bcd7f5' }
+  };
+  const CANCEL_CODES = [
+    'Patient Cancelled - Schedule Conflict', 'Patient Cancelled - Illness',
+    'Same-Day Cancel - After Hours (AI Voice Agent)', 'Office Cancelled', 'Rescheduled - Moved to New Day'
+  ];
+
+  const P = {
+    '4101': { id: '4101', first: 'Owen', last: 'Whitfield', sex: 'M', dob: '2019-03-14', office: '101', provider: 'ruiz', hyg: 'lopez', firstVisit: '2023-04-11', lastVisit: '2026-04-14',
+      chart: 'W-4101', addr: '218 Tulip Poplar Ln', city: 'Franklin', st: 'TN', zip: '37064', referral: 'Family / Friend', language: 'English', alerts: [],
+      respId: '8801', ins: { carrier: 'Delta Dental of Tennessee', phone: '800-555-0147', group: '4471', subscriber: 'Jessica Whitfield', rel: 'Parent', memberId: 'DD-551-20-8841', max: 1500, maxRem: 1150, ded: 50, dedRem: 0 }, members: ['4101', '4102'] },
+    '4102': { id: '4102', first: 'Lily', last: 'Whitfield', sex: 'F', dob: '2017-07-22', office: '101', provider: 'ruiz', hyg: 'pike', firstVisit: '2022-01-18', lastVisit: '2026-04-14',
+      chart: 'W-4102', addr: '218 Tulip Poplar Ln', city: 'Franklin', st: 'TN', zip: '37064', referral: 'Family / Friend', language: 'English', alerts: [],
+      respId: '8801', ins: { carrier: 'Delta Dental of Tennessee', phone: '800-555-0147', group: '4471', subscriber: 'Jessica Whitfield', rel: 'Parent', memberId: 'DD-551-20-8842', max: 1500, maxRem: 1320, ded: 50, dedRem: 0 }, members: ['4101', '4102'] },
+    '4201': { id: '4201', first: 'Sofia', last: 'Reyes', sex: 'F', dob: '2020-02-18', office: '101', provider: 'ruiz', hyg: 'lopez', firstVisit: '2024-02-27', lastVisit: '2026-03-05',
+      chart: 'R-4201', addr: '77 Harpeth Ridge Ct', city: 'Franklin', st: 'TN', zip: '37067', referral: 'Website', language: 'Spanish', alerts: [],
+      respId: '8802', ins: { carrier: 'TennCare - DentaQuest', phone: '800-555-0163', group: 'TNC-DEN', subscriber: 'Sofia Reyes', rel: 'Self', memberId: 'TC-90-4417-02', max: 0, maxRem: 0, ded: 0, dedRem: 0 }, members: ['4201', '4202'] },
+    '4202': { id: '4202', first: 'Mateo', last: 'Reyes', sex: 'M', dob: '2023-06-09', office: '101', provider: 'ruiz', hyg: 'lopez', firstVisit: '2025-01-14', lastVisit: '2026-03-05',
+      chart: 'R-4202', addr: '77 Harpeth Ridge Ct', city: 'Franklin', st: 'TN', zip: '37067', referral: 'Website', language: 'Spanish', alerts: [],
+      respId: '8802', ins: { carrier: 'TennCare - DentaQuest', phone: '800-555-0163', group: 'TNC-DEN', subscriber: 'Mateo Reyes', rel: 'Self', memberId: 'TC-90-4417-03', max: 0, maxRem: 0, ded: 0, dedRem: 0 }, members: ['4201', '4202'] },
+    '4301': { id: '4301', first: 'Ethan', last: 'Brooks', sex: 'M', dob: '2018-08-30', office: '101', provider: 'ruiz', hyg: 'pike', firstVisit: '2023-09-12', lastVisit: '2026-05-20',
+      chart: 'B-4301', addr: '905 Whispering Pines Dr', city: 'Franklin', st: 'TN', zip: '37069', referral: 'Insurance Plan', language: 'English', alerts: ['Penicillin allergy', 'Seasonal asthma - inhaler in bag'],
+      respId: '8803', ins: { carrier: 'MetLife Dental', phone: '800-555-0121', group: '88210', subscriber: 'Rachel Brooks', rel: 'Parent', memberId: 'ML-3317-9920', max: 1500, maxRem: 980, ded: 50, dedRem: 0 }, members: ['4301'] },
+    '4401': { id: '4401', first: 'Liam', last: 'Foster', sex: 'M', dob: '2022-01-12', office: '101', provider: 'ruiz', hyg: 'pike', firstVisit: '2025-07-08', lastVisit: '2026-01-27',
+      chart: 'F-4401', addr: '31 Kingsley Park Cir', city: 'Franklin', st: 'TN', zip: '37064', referral: 'Family / Friend', language: 'English', alerts: [],
+      respId: '8804', ins: { carrier: 'Cigna Dental', phone: '800-555-0188', group: '55102', subscriber: 'Andre Foster', rel: 'Parent', memberId: 'CG-77-4410-02', max: 1200, maxRem: 1200, ded: 50, dedRem: 50 }, members: ['4401'] },
+    '4501': { id: '4501', first: 'Arjun', last: 'Patel', sex: 'M', dob: '2015-04-04', office: '101', provider: 'hale', hyg: 'lopez', firstVisit: '2021-06-02', lastVisit: '2026-06-09',
+      chart: 'P-4501', addr: '2290 Bending Creek Rd', city: 'Franklin', st: 'TN', zip: '37067', referral: 'Insurance Plan', language: 'English', alerts: ['Latex sensitivity'],
+      respId: '8805', ins: { carrier: 'MetLife Dental', phone: '800-555-0121', group: '61907', subscriber: 'Anita Patel', rel: 'Parent', memberId: 'ML-6190-4471', max: 1500, maxRem: 1210, ded: 50, dedRem: 0, orthoMax: 1500, orthoRem: 1500, orthoPct: 50, orthoAge: 19 }, members: ['4501'] }
+  };
+  const RESP = {
+    '8801': { id: '8801', name: 'Jessica Whitfield', cell: '615-555-0142', email: 'jessica.whitfield@example.com', type: 'Parent', home: 'Cedar Grove Kids Dental [101]' },
+    '8802': { id: '8802', name: 'Carmen Reyes', cell: '615-555-0177', email: 'carmen.reyes@example.com', type: 'Parent', home: 'Cedar Grove Kids Dental [101]' },
+    '8803': { id: '8803', name: 'Rachel Brooks', cell: '615-555-0123', email: 'rachel.brooks@example.com', type: 'Parent', home: 'Cedar Grove Kids Dental [101]' },
+    '8804': { id: '8804', name: 'Andre Foster', cell: '615-555-0165', email: 'andre.foster@example.com', type: 'Parent', home: 'Cedar Grove Kids Dental [101]' },
+    '8805': { id: '8805', name: 'Anita Patel', cell: '615-555-0190', email: 'anita.patel@example.com', type: 'Parent', home: 'Cedar Grove Kids Dental [101]' }
+  };
+  // The new patient the AI registers in scenario 2 (not in Denticon until the call)
+  const NEW_PATIENT = { first: 'Noah', last: 'Carter', sex: 'M', dob: '2021-05-09', office: '102', respName: 'Daniel Carter', cell: '615-555-0134', email: 'daniel.carter@example.com',
+    addr: '5512 Concord Rd', city: 'Brentwood', st: 'TN', zip: '37027', referral: 'Website', language: 'English',
+    ins: { carrier: 'Cigna Dental', phone: '800-555-0188', group: '90210', subscriber: 'Daniel Carter', rel: 'Parent', memberId: 'CG-77-3001-128' } };
+
+  // Relative day keys keep the demo calendar current on any demo day
+  const DOW = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5 };
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function iso(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function parse(s) { const a = s.split('-').map(Number); return new Date(a[0], a[1] - 1, a[2]); }
+  function addDays(d, n) { const x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x; }
+  function isWeekday(d) { const w = d.getDay(); return w >= 1 && w <= 5; }
+  function snapToBiz(d) { let x = new Date(d.getTime()); while (!isWeekday(x)) x = addDays(x, 1); return x; }
+  function nextBiz(d) { return snapToBiz(addDays(d, 1)); }
+  function resolveDay(key, today) {
+    if (key === 'today') return today;
+    if (key === 'tomorrow') return nextBiz(today);
+    const m = /^next(Mon|Tue|Wed|Thu|Fri)$/.exec(key);
+    if (m) {
+      const dow = (today.getDay() + 6) % 7; // Mon=0
+      const mondayThis = addDays(today, -dow);
+      return addDays(mondayThis, 7 + DOW[m[1]] - 1);
+    }
+    return parse(key);
+  }
+  function ageOn(dobIso, onDate) {
+    const b = parse(dobIso); let a = onDate.getFullYear() - b.getFullYear();
+    const md = (onDate.getMonth() - b.getMonth()) || (onDate.getDate() - b.getDate());
+    if (md < 0) a--; return a;
+  }
+  function hm(s) { const a = s.split(':').map(Number); return a[0] * 60 + a[1]; }
+  function fromMin(m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
+  function fmt12(s) { const m = hm(s); let h = Math.floor(m / 60); const mm = m % 60; const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; return h + ':' + pad(mm) + ' ' + ap; }
+
+  // Seed appointments: [id, pid|null, filler name, office, dayKey, start, dur, op, type, status]
+  const SEED = [
+    ['PDDS60121', '4101', null, '101', 'nextMon', '11:30', 45, 'H1', 'REC', 'Scheduled'],
+    ['PDDS60122', '4102', null, '101', 'nextWed', '15:30', 45, 'H2', 'REC', 'Scheduled'],
+    ['PDDS60131', '4201', null, '101', 'tomorrow', '09:30', 45, 'H1', 'REC', 'Scheduled'],
+    ['PDDS60132', '4202', null, '101', 'tomorrow', '10:15', 30, 'OP1', 'LIM', 'Scheduled'],
+    ['PDDS60141', '4401', null, '101', 'today', '10:30', 45, 'H2', 'REC', 'Scheduled'],
+    ['PDDS60151', '4501', null, '101', 'nextTue', '16:00', 60, 'OP2', 'ORT', 'Scheduled']
+  ];
+  const FILLERS = [
+    // office 101
+    ['101', 'today', '08:00', 45, 'H1', 'REC', 'Adams, Maya'], ['101', 'today', '09:00', 60, 'OP1', 'FIL', 'Nguyen, Leo'], ['101', 'today', '08:30', 45, 'H2', 'REC', 'Patterson, Zoe'],
+    ['101', 'today', '13:00', 45, 'H1', 'REC', 'Okafor, Ruth'], ['101', 'today', '14:00', 60, 'OP2', 'FIL', 'Santos, Diego'], ['101', 'today', '09:30', 60, 'OP2', 'NPE', 'Kowalski, Ben'],
+    ['101', 'tomorrow', '08:00', 45, 'H2', 'REC', 'Bell, Hannah'], ['101', 'tomorrow', '08:30', 60, 'OP1', 'NPE', 'Rivera, Omar'], ['101', 'tomorrow', '11:00', 45, 'H1', 'REC', 'Shah, Anika'],
+    ['101', 'tomorrow', '13:30', 45, 'H2', 'REC', 'Foley, Nora'], ['101', 'tomorrow', '14:30', 60, 'OP2', 'FIL', 'Mendez, Lucas'],
+    ['101', 'nextMon', '08:30', 45, 'H2', 'REC', 'Tran, Mia'], ['101', 'nextMon', '09:00', 60, 'OP1', 'NPE', 'Hughes, Eli'], ['101', 'nextMon', '13:00', 45, 'H1', 'REC', 'Ibrahim, Salma'],
+    ['101', 'nextTue', '09:00', 60, 'OP1', 'FIL', 'Park, Jin'], ['101', 'nextTue', '10:00', 45, 'H1', 'REC', 'Webb, Caleb'], ['101', 'nextTue', '13:30', 45, 'H2', 'REC', 'Cole, Ava'],
+    ['101', 'nextWed', '09:00', 45, 'H1', 'REC', 'Brandt, Theo'], ['101', 'nextWed', '10:30', 60, 'OP1', 'NPE', 'Lang, Isla'], ['101', 'nextWed', '13:00', 60, 'OP2', 'FIL', 'Murphy, Finn'],
+    ['101', 'nextThu', '08:30', 45, 'H1', 'REC', 'Reed, Chloe'], ['101', 'nextThu', '09:30', 60, 'OP1', 'NPE', 'Gomez, Ian'], ['101', 'nextThu', '10:30', 45, 'H2', 'REC', 'Lowe, Ella'],
+    ['101', 'nextThu', '13:00', 45, 'H1', 'REC', 'Quinn, Jack'], ['101', 'nextThu', '14:00', 45, 'H2', 'REC', 'Hart, Lena'], ['101', 'nextThu', '13:30', 60, 'OP1', 'FIL', 'Dixon, Cal'],
+    // office 102 (Brentwood): leave next Tuesday open for Dr. Nair
+    ['102', 'nextTue', '08:00', 60, 'OP1', 'NPE', 'Bishop, Leah'], ['102', 'nextTue', '11:30', 60, 'OP1', 'FIL', 'Cruz, Mateo'], ['102', 'nextTue', '08:30', 60, 'OP2', 'FIL', 'Fox, Owen'],
+    ['102', 'nextTue', '11:00', 45, 'H1', 'REC', 'Gill, Rina'], ['102', 'nextTue', '14:30', 60, 'OP2', 'NPE', 'Ward, Emma'], ['102', 'nextTue', '09:00', 45, 'H1', 'REC', 'Lund, Axel'],
+    ['102', 'nextMon', '08:30', 60, 'OP1', 'NPE', 'Hayes, Ruby'], ['102', 'nextWed', '09:00', 60, 'OP1', 'FIL', 'Stone, Jude'], ['102', 'today', '09:00', 60, 'OP1', 'NPE', 'Frost, Kai'],
+    ['102', 'tomorrow', '10:00', 45, 'H1', 'REC', 'Ivey, Nia']
+  ];
+
+  // Offered slots the AI uses in the demo (must stay free; tested)
+  const OFFERS = {
+    familyDay: 'nextThu', familySlots: ['15:30', '16:15'], familyOps: ['H1', 'H2'],
+    newPatientDay: 'nextTue', newPatientOffice: '102', newPatientSlots: ['09:00', '10:30', '14:00'],
+    emergencySlot: { day: 'today', start: '11:30', op: 'EMG', office: '101' }
+  };
+
+  function freshState(todayDate) {
+    const today = snapToBiz(todayDate);
+    const appts = [];
+    SEED.forEach(s => appts.push({ id: s[0], pid: s[1], name: null, office: s[3], date: iso(resolveDay(s[4], today)), start: s[5], dur: s[6], op: s[7], type: s[8], status: s[9], updated: 'Seed', by: 'Front Desk' }));
+    let n = 70010;
+    FILLERS.forEach(f => {
+      const fd = iso(resolveDay(f[1], today)); const fh = hoursFor(f[0], fd);
+      if (!fh || hm(f[2]) < fh[0] * 60 || hm(f[2]) + f[3] > fh[1] * 60) { n++; return; } // skip fillers that fall outside hours (e.g. late Friday)
+      if (appts.some(x => x.office === f[0] && x.date === fd && x.op === f[4] && overlaps(x, f[2], f[3]))) { n++; return; } // skip fillers that would overlap (two day keys can land on the same date)
+      appts.push({ id: 'PDDS' + (n++), pid: null, name: f[6], office: f[0], date: fd, start: f[2], dur: f[3], op: f[4], type: f[5], status: f[3] % 2 ? 'Confirmed' : 'Scheduled', updated: 'Seed', by: 'Front Desk' });
+    });
+    const patients = JSON.parse(JSON.stringify(P));
+    const sms = {}; const notes = {}; const ledger = {};
+    Object.keys(patients).forEach(id => {
+      const pt = patients[id];
+      sms[id] = [{ dir: 'out', who: 'Automated Campaigns - ' + OFFICES[pt.office].name, t: iso(addDays(today, -9)) + ' 14:02', text: 'This is a reminder from ' + OFFICES[pt.office].name + ' for your upcoming dental visit. Reply STOP to end.' }];
+      notes[id] = [{ t: iso(addDays(today, -40)) + ' 09:12', by: 'Front Desk', text: 'Parent prefers text reminders. Preferred language: ' + pt.language + '.' }];
+      const base = pt.ins.maxRem ? 0 : 0;
+      ledger[id] = [
+        { d: iso(parse(pt.lastVisit)), code: 'D1120', desc: 'Prophylaxis - Child', prov: PROVIDERS[pt.hyg].short, fee: 76, ins: 60.8, pat: 15.2, bal: 0 },
+        { d: iso(parse(pt.lastVisit)), code: 'D0120', desc: 'Periodic Oral Evaluation', prov: PROVIDERS[pt.provider].short, fee: 52, ins: 41.6, pat: 10.4, bal: 0 },
+        { d: iso(parse(pt.lastVisit)), code: 'D1206', desc: 'Topical Fluoride Varnish', prov: PROVIDERS[pt.hyg].short, fee: 38, ins: 30.4, pat: 7.6, bal: 0 }
+      ];
+    });
+    return { initDate: iso(today), today: iso(today), patients, resp: JSON.parse(JSON.stringify(RESP)), appts, sms, notes, ledger, regs: [], apiLog: [], seq: 80100, updatedIds: [] };
+  }
+
+  function opsOf(office) { return OFFICES[office].ops; }
+  function hoursFor(office, isoDate) { const w = parse(isoDate).getDay(); return OFFICES[office].hours[w] || null; }
+  function overlaps(a, bStart, bDur) { const s = hm(a.start), e = s + a.dur; const s2 = hm(bStart), e2 = s2 + bDur; return s < e2 && s2 < e; }
+  function isFree(state, office, isoDate, op, start, dur, ignoreId) {
+    const h = hoursFor(office, isoDate); if (!h) return false;
+    const s = hm(start); if (s < h[0] * 60 || s + dur > h[1] * 60) return false;
+    return !state.appts.some(a => a.id !== ignoreId && a.status !== 'Cancelled' && a.office === office && a.date === isoDate && a.op === op && overlaps(a, start, dur));
+  }
+  function eligibleOps(office, typeCode, age) {
+    const t = TYPES[typeCode];
+    return opsOf(office).filter(o => {
+      if (o.kind !== t.kind) return false;
+      const p = PROVIDERS[o.prov]; return age >= p.minAge && age <= p.maxAge;
+    });
+  }
+  function freeSlots(state, office, isoDate, typeCode, age, providerId) {
+    const t = TYPES[typeCode]; const h = hoursFor(office, isoDate); if (!h) return [];
+    const out = [];
+    eligibleOps(office, typeCode, age).forEach(o => {
+      if (providerId && o.prov !== providerId) return;
+      for (let m = h[0] * 60; m + t.dur <= h[1] * 60; m += 15) {
+        const st = fromMin(m);
+        if (isFree(state, office, isoDate, o.id, st, t.dur)) out.push({ office, date: isoDate, start: st, op: o.id, prov: o.prov, dur: t.dur, type: typeCode });
+      }
+    });
+    out.sort((a, b) => (a.start < b.start ? -1 : a.start > b.start ? 1 : 0));
+    return out;
+  }
+  function log(state, name, params, result) { state.apiLog.unshift({ t: new Date().toLocaleTimeString(), name, params, result }); if (state.apiLog.length > 60) state.apiLog.pop(); }
+  function nextId(state) { return 'PDDS' + (state.seq++); }
+  function stamp(state, d) { return iso(d || parse(state.today)) + ' ' + new Date().toTimeString().slice(0, 5); }
+
+  function bookAppt(state, o) {
+    const pt = state.patients[o.pid] || { first: o.first || '', last: o.last || '' }; const t = TYPES[o.type];
+    const id = nextId(state);
+    const a = { id, pid: o.pid, name: null, office: o.office, date: o.date, start: o.start, dur: t.dur, op: o.op, type: o.type, status: 'Scheduled', updated: stamp(state), by: o.by || 'NCC AI Voice Agent (API)', note: o.note || '' };
+    state.appts.push(a); state.updatedIds.push(id);
+    const op = opsOf(o.office).find(x => x.id === o.op);
+    log(state, 'AppointNow / BookAppointmentSlot', { OID: o.office, PROVIDERID: op.prov, OPID: o.op, PRODTYPE: o.type, APPTDATE: o.date, STARTTIME: o.start, APPTDURATION: t.dur, FIRSTNAME: pt.first, LASTNAME: pt.last, NOTETOOFFICE: (o.note || '').slice(0, 60) }, { Successful: true, APPTID: id });
+    return a;
+  }
+  function cancelAppt(state, id, code, note, by) {
+    const a = state.appts.find(x => x.id === id); a.status = 'Cancelled'; a.updated = stamp(state); a.by = by || 'NCC AI Voice Agent (API)'; a.cancelCode = code; a.cancelNote = note || '';
+    state.updatedIds.push(id);
+    log(state, 'CancelAppointment', { OID: a.office, APPTID: id, CANCELLATIONCODEID: code, CANCELLATIONNOTE: (note || '').slice(0, 60) }, { Successful: true });
+    return a;
+  }
+  function confirmAppt(state, id, by) {
+    const a = state.appts.find(x => x.id === id); a.status = 'Confirmed'; a.updated = stamp(state); a.by = by || 'NCC AI Voice Agent (API)'; state.updatedIds.push(id);
+    log(state, 'ConfirmAppointment', { OID: a.office, APPTID: id, Date: state.today }, { Successful: true });
+    return a;
+  }
+  // Reschedule = book new first, then cancel old (never lose a slot)
+  function reschedule(state, id, slot, by, note) {
+    const old = state.appts.find(x => x.id === id);
+    const nw = bookAppt(state, { pid: old.pid, office: slot.office || old.office, date: slot.date, start: slot.start, op: slot.op, type: old.type, by, note });
+    cancelAppt(state, id, 'Rescheduled - Moved to New Day', 'Moved to ' + slot.date + ' ' + slot.start + ' (' + nw.id + ')', by);
+    return nw;
+  }
+  function addNote(state, pid, text, by) { state.notes[pid].unshift({ t: stamp(state), by: by || 'NCC AI Voice Agent (API)', text }); }
+  function addSms(state, pid, text, who) { state.sms[pid].push({ dir: 'out', who: who || 'AI Voice Agent - ' + OFFICES[state.patients[pid].office].name, t: stamp(state), text }); }
+  function existingPatientCheck(state, first, last, dob) {
+    const hit = Object.values(state.patients).find(p => p.first.toLowerCase() === first.toLowerCase() && p.last.toLowerCase() === last.toLowerCase() && p.dob === dob);
+    log(state, 'IsExistingPatient', { LASTNAME: last, FIRSTNAME: first, BIRTHDATE: dob }, { Successful: true, IsExisting: !!hit });
+    return !!hit;
+  }
+  function registerNew(state, np) {
+    existingPatientCheck(state, np.first, np.last, np.dob);
+    const reg = { id: 'OR-' + (state.seq++), temp: 'TMP' + (state.seq++), received: stamp(state), source: 'NCC AI Voice Agent (API)', status: 'Pending', data: JSON.parse(JSON.stringify(np)) };
+    state.regs.unshift(reg);
+    log(state, 'AddPatientInformation', { OID: np.office, FIRSTNAME: np.first, LASTNAME: np.last, BIRTHDATE: np.dob, SEX: np.sex, CELL: np.cell, ADDRESS: np.addr, ZIP: np.zip, REFERRALTYPE: np.referral }, { Successful: true, TemporaryPatientId: reg.temp });
+    log(state, 'AddPatientInsuranceInformation', { TemporaryPatientId: reg.temp, INSURANCENAME: np.ins.carrier, GROUPNO: np.ins.group, SUBSCRIBERID: np.ins.memberId, SUBSCRIBER: np.ins.subscriber, RELATION: np.ins.rel }, { Successful: true });
+    return reg;
+  }
+  function acceptReg(state, regId) {
+    const reg = state.regs.find(r => r.id === regId); const d = reg.data;
+    const pid = '4' + (600 + state.regs.length + Object.keys(state.patients).length); const rid = '88' + (10 + Object.keys(state.resp).length);
+    state.resp[rid] = { id: rid, name: d.respName, cell: d.cell, email: d.email, type: 'Parent', home: OFFICES[d.office].name + ' [' + d.office + ']' };
+    state.patients[pid] = { id: pid, first: d.first, last: d.last, sex: d.sex, dob: d.dob, office: d.office, provider: 'nair', hyg: 'ortiz', firstVisit: state.today, lastVisit: '', chart: d.last[0] + '-' + pid, addr: d.addr, city: d.city, st: d.st, zip: d.zip, referral: d.referral, language: d.language, alerts: [], respId: rid,
+      ins: { carrier: d.ins.carrier, phone: d.ins.phone, group: d.ins.group, subscriber: d.ins.subscriber, rel: d.ins.rel, memberId: d.ins.memberId, max: 1200, maxRem: 1200, ded: 50, dedRem: 50 }, members: [pid] };
+    state.sms[pid] = []; state.notes[pid] = []; state.ledger[pid] = [];
+    reg.status = 'Accepted'; reg.pid = pid;
+    state.appts.filter(a => a.regId === reg.id).forEach(a => { a.pid = pid; });
+    return pid;
+  }
+
+  // Scripted results of each demo scenario (what the AI call wrote back)
+  function applyScenario(state, n, opts) {
+    const prevSeq = state.seq; state.seq = 80000 + n * 10; // deterministic IDs per scenario so the report page always matches
+    try { return applyScenarioInner(state, n, opts || {}); } finally { state.seq = prevSeq; }
+  }
+  function applyScenarioInner(state, n, opts) {
+    const today = parse(state.today);
+    const ph = (k) => iso(resolveDay(k, today));
+    if (n === 1) {
+      const day = ph(OFFERS.familyDay);
+      const a1 = state.appts.find(a => a.pid === '4101' && a.status !== 'Cancelled' && a.id === 'PDDS60121') || state.appts.find(a => a.pid === '4101' && a.status !== 'Cancelled');
+      const a2 = state.appts.find(a => a.pid === '4102' && a.status !== 'Cancelled');
+      if (!a1 || !a2) return null;
+      const st1 = ['15:30', '16:15'].includes(opts.start) ? opts.start : '15:30';
+      const s1 = { office: '101', date: day, start: st1, op: 'H1' }, s2 = { office: '101', date: day, start: st1, op: 'H2' };
+      const n1 = reschedule(state, a1.id, s1, null, 'Parent asked to move both siblings to the same day. Call reason: family reschedule.');
+      const n2 = reschedule(state, a2.id, s2, null, 'Parent asked to move both siblings to the same day. Call reason: family reschedule.');
+      addNote(state, '4101', 'AI call summary: parent moved Owen and Lily to the same day (' + day + ' ' + fmt12(st1) + ', two hygiene chairs). Confirmation text sent.');
+      addNote(state, '4102', 'AI call summary: parent moved Owen and Lily to the same day (' + day + ' ' + fmt12(st1) + ', two hygiene chairs). Confirmation text sent.');
+      addSms(state, '4101', 'Cedar Grove Kids Dental: your appointments are confirmed for ' + day + ' at ' + fmt12(st1) + '. Reply STOP to end.');
+      return [n1.id, n2.id];
+    }
+    if (n === 2) {
+      const d = JSON.parse(JSON.stringify(NEW_PATIENT)); const reg = registerNew(state, d);
+      const day = ph(OFFERS.newPatientDay);
+      const st2 = ['09:00', '10:30', '14:00'].includes(opts.start) ? opts.start : '10:30';
+      const a = bookAppt(state, { pid: null, first: d.first, last: d.last, office: '102', date: day, start: st2, op: 'OP1', type: 'NPE', by: null, note: 'New patient, age 5. Booked with age-eligible provider. Insurance captured: Cigna Dental.' });
+      a.pid = null; a.regId = reg.id; a.name = 'Carter, Noah (new)';
+      return [reg.id, a.id];
+    }
+    if (n === 3) { const a = state.appts.find(x => x.id === 'PDDS60131'); confirmAppt(state, a.id); addNote(state, '4201', 'AI call (Spanish): parent confirmed appointment and asked for practice hours. Language: Spanish.'); addSms(state, '4201', 'Cedar Grove Kids Dental: su cita esta confirmada para manana a las 9:30 AM. Responda STOP para cancelar mensajes.'); return [a.id]; }
+    if (n === 4) {
+      const day = ph(OFFERS.emergencySlot.day);
+      const a = bookAppt(state, { pid: '4301', office: '101', date: day, start: '11:30', op: 'EMG', type: 'EMG', by: 'Emergency Triage (Agent)', note: 'Avulsed permanent tooth. Triage by clinical line.' });
+      addNote(state, '4301', 'AI call summary: caller reports knocked-out permanent tooth (about 10 minutes ago). Transferred immediately to Clinical Emergency queue. No clinical advice given by AI.', 'NCC AI Voice Agent (API)');
+      return [a.id];
+    }
+    if (n === 5) { addNote(state, '4101', 'AI call: caller asked for a person before stating a request. Transferred immediately to Existing Patient queue. Label: immediate live-agent request.'); return []; }
+    if (n === 6) {
+      const a = state.appts.find(x => x.id === 'PDDS60141'); cancelAppt(state, a.id, 'Same-Day Cancel - After Hours (AI Voice Agent)', 'Parent cancelled by phone before office opened.');
+      addNote(state, '4401', 'AI call (after hours): parent cancelled same-day appointment. Confirmation text sent.');
+      addSms(state, '4401', 'Cedar Grove Kids Dental: your appointment today is cancelled. Call us any time to rebook. Reply STOP to end.');
+      return [a.id];
+    }
+    if (n === 7) { addNote(state, '4101', 'AI call: question outside FAQ (sensory-friendly appointments). Gap flagged for D4C content owner. Caller offered transfer to Patient Support.'); return []; }
+    if (n === 8) { addNote(state, '4501', 'AI call: parent asked if plan covers braces. Warm transfer to Insurance and Billing with context.'); return []; }
+    return [];
+  }
+
+  return { OFFICES, PROVIDERS, TYPES, CANCEL_CODES, OFFERS, P, RESP, NEW_PATIENT, freshState, freeSlots, isFree, eligibleOps, bookAppt, cancelAppt, confirmAppt, reschedule, addNote, addSms,
+    registerNew, acceptReg, existingPatientCheck, applyScenario, resolveDay, snapToBiz, iso, parse, addDays, ageOn, fmt12, fromMin, hm, hoursFor, opsOf, nextBiz };
+})();
+if (typeof module !== 'undefined') module.exports = D4C;
+</script>
+<script>// ===== UI =====
+(function () {
+  const D = D4C;
+  const KEY = 'd4c-denticon-demo-v2';
+  const Q = new URLSearchParams(location.search);
+  let state = null;
+  const S = { view: 'scheduler', pid: null, office: '101', date: null, sel: null, tab: 'SUMMARY', thread: null, flash: [] };
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+  function $(id) { return document.getElementById(id); }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function realToday() { const q = Q.get('today'); return q ? D.parse(q) : new Date(); }
+  function reset() { state = D.freshState(realToday()); state.applied = []; save(); }
+  function init() {
+    if (Q.get('reset') === '1') { reset(); }
+    else {
+      try { state = JSON.parse(localStorage.getItem(KEY)); } catch (e) { state = null; }
+      const want = D.iso(D.snapToBiz(realToday()));
+      if (!state || state.initDate !== want) reset();
+    }
+    state.applied = state.applied || [];
+    S.date = state.today;
+    const sc = Q.get('scenario');
+    if (sc) sc.split(',').forEach(n => { if (!state.applied.includes(n)) { const ids = D.applyScenario(state, +n, { start: Q.get('st') }); state.applied.push(n); S.flash = S.flash.concat(ids || []); if (+n === 2) S.view = 'regs'; } });
+    if (Q.get('pid') && state.patients[Q.get('pid')]) { S.pid = Q.get('pid'); S.office = state.patients[S.pid].office; }
+    if (Q.get('office') && D.OFFICES[Q.get('office')]) S.office = Q.get('office');
+    if (Q.get('date')) S.date = Q.get('date');
+    S.view = Q.get('view') || (sc && +sc.split(',')[0] === 2 ? 'regs' : (S.pid ? 'overview' : 'scheduler'));
+    if (Q.get('appt')) { S.sel = Q.get('appt'); const a = state.appts.find(x => x.id === S.sel); if (a) { S.date = a.date; S.office = a.office; } S.flash.push(S.sel); }
+    save();
+  }
+  const P = id => state.patients[id];
+  const fullName = p => p.last + ', ' + p.first;
+  const age = p => D.ageOn(p.dob, D.parse(state.today));
+  function fmtDate(isoS) { const d = D.parse(isoS); return (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear(); }
+  function longDate(isoS) { return D.parse(isoS).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }); }
+  function shortDay(isoS) { return D.parse(isoS).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); }
+  function toast(msg) { const t = $('toast'); t.innerHTML = msg; t.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), 4200); }
+  function modal(title, body, foot) { $('modal').innerHTML = '<div class="mh"><span>' + title + '</span><span style="cursor:pointer" data-act="closeModal">X</span></div><div class="mb">' + body + '</div>' + (foot ? '<div class="mf">' + foot + '</div>' : ''); $('modalbg').classList.add('on'); }
+  function closeModal() { $('modalbg').classList.remove('on'); }
+  const statusPill = s => '<span class="pill ' + (s === 'Confirmed' ? 'p-c' : s === 'Cancelled' ? 'p-x' : 'p-s') + '">' + s + '</span>';
+
+  // ---------- chrome ----------
+  const IC = {
+    cal: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>', home: '<path d="M4 11l8-7 8 7v9H4z"/><path d="M10 20v-6h4v6"/>', usd: '<circle cx="12" cy="12" r="8"/><path d="M12 7v10M9.5 9.5c0-1.3 1.2-2 2.5-2s2.5.7 2.5 2-1.2 1.8-2.5 2-2.5.8-2.5 2 1.2 2 2.5 2 2.500-.7 2.500-2"/>',
+    tooth: '<path d="M7 4c-2 0-3 2-3 4 0 3 2 4 2 8 0 3 1 4 2 4s1.5-3 2-5c.5 2 1 5 2 5s2-1 2-4c0-4 2-5 2-8 0-2-1-4-3-4-2 0-2 1-3 1s-1-1-3-1z"/>', chat: '<path d="M4 5h16v11H9l-5 4z"/>', globe: '<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c3 3 3 13 0 16M12 4c-3 3-3 13 0 16"/>',
+    shield: '<path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/>', note: '<path d="M5 4h11l3 3v13H5z"/><path d="M8 10h8M8 14h8"/>', clock: '<circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/>',
+    rx: '<path d="M6 4h6a3 3 0 010 6H6M6 4v16M10 10l7 10"/>', file: '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/>', mail: '<rect x="4" y="6" width="16" height="12" rx="1"/><path d="M4 7l8 6 8-6"/>', chart: '<path d="M4 20V4M4 20h16M8 16l4-5 3 3 5-7"/>', gear: '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.600 5.600l2.100 2.100M16.300 16.300l2.100 2.100M5.600 18.400l2.100-2.100M16.300 7.700l2.100-2.100"/>'
+  };
+  const ico = n => '<svg viewBox="0 0 24 24">' + IC[n] + '</svg>';
+  function renderChrome() {
+    const nu = Object.keys(state.sms).filter(id => (state.sms[id] || []).some(m => m.dir === 'in' && m.unread)).length;
+    const np = state.regs.filter(r => r.status === 'Pending').length;
+    const tools = [['cal', 'Scheduler', 'scheduler'], ['home', 'Patient Overview', 'overview'], ['usd', 'Account Ledger', 'ledger'], ['tooth', 'Restorative Chart', 'chart'], ['note', 'Progress Notes', 'notes'], ['chat', 'Two-Way Communications', 'comms', nu], ['globe', 'Online Registrations', 'regs', np], ['shield', 'Eligibility', 'elig'], ['clock'], ['rx'], ['file'], ['mail'], ['chart'], ['gear']];
+    $('toolbar').innerHTML = tools.map(t => '<div class="ic ' + (t[2] ? (S.view === t[2] ? 'act' : '') : 'dis') + '" title="' + (t[1] || 'Not part of this demo') + '" ' + (t[2] ? 'data-act="view" data-v="' + t[2] + '"' : 'data-act="na"') + '>' + ico(t[0]) + (t[3] ? '<span class="badge">' + t[3] + '</span>' : '') + '</div>').join('') +
+      '<div class="sep"></div><div id="searchbox"><input id="q" placeholder="Search Patient..." autocomplete="off"><div id="results" style="display:none"></div></div>';
+    const q = $('q'); q.oninput = () => {
+      const v = q.value.trim().toLowerCase(); const r = $('results'); if (!v) { r.style.display = 'none'; return; }
+      const hits = Object.values(state.patients).filter(p => (p.first + ' ' + p.last + ' ' + p.last + ', ' + p.first + ' ' + p.id).toLowerCase().includes(v)).slice(0, 8);
+      r.innerHTML = hits.map(p => '<div data-act="pickpt" data-id="' + p.id + '"><b>' + esc(fullName(p)) + '</b> &nbsp; ' + age(p) + ' / ' + p.sex + ' &nbsp; ID ' + p.id + '</div>').join('') || '<div>No patients found</div>'; r.style.display = 'block';
+    };
+    const menu = (label, items) => '<div class="mi">' + label + (items ? '<div class="dd">' + items.map(i => '<div class="' + (i[1] ? '' : 'off') + '" ' + (i[1] ? 'data-act="view" data-v="' + i[1] + '"' : 'data-act="na"') + '>' + i[0] + '</div>').join('') + '</div>' : '') + '</div>';
+    $('menubar').innerHTML = '<div class="mi" data-act="view" data-v="scheduler">Scheduler</div>' +
+      menu('Patient &#9662;', [['Patient Overview', 'overview'], ['Restorative Chart', 'chart'], ['Progress Notes', 'notes'], ['Two-Way Communications', 'comms'], ['Insurance Eligibility', 'elig'], ['Online Registered Patients', 'regs'], ['Patient Search', null]]) +
+      menu('Transactions &#9662;', [['Account Ledger', 'ledger'], ['Post Payment', null], ['Payment Plans', null]]) + menu('Charting &#9662;', [['Restorative Chart', 'chart'], ['Perio Chart', null], ['Treatment Plan', null]]) +
+      menu('Reports &#9662;', [['Appointment Reports', null], ['Production Reports', null]]) + menu('Utilities &#9662;', [['Message Center', null]]) + menu('Setup &#9662;', [['Offices', null], ['API Vendor Settings', null]]) + menu('Help &#9662;', [['Help Center', null]]) +
+      '<div class="mi">My Page</div><div class="mi">Logout</div><div class="sp"></div><span class="off-l">Office</span><select id="officesel">' + Object.values(D.OFFICES).map(o => '<option value="' + o.id + '"' + (o.id === S.office ? ' selected' : '') + '>' + o.name + ' [' + o.id + ']</option>').join('') + '</select>';
+    $('officesel').onchange = e => { S.office = e.target.value; if (S.view !== 'scheduler' && S.pid && P(S.pid).office !== S.office) { /* keep patient */ } render(); };
+    const p = S.pid ? P(S.pid) : null;
+    if (p && S.view !== 'scheduler' && S.view !== 'regs') {
+      const r = state.resp[p.respId]; const bal = 0;
+      $('strip').style.display = 'flex';
+      $('strip').innerHTML = '<div class="av">' + p.first[0] + p.last[0] + '</div><div class="col"><div class="nm">' + esc(p.last + ', ' + p.first) + '</div>(C) ' + r.cell + '<br>' + esc(r.email) + (p.alerts.length ? '<br><span class="alert">ALERT: ' + esc(p.alerts[0]) + '</span>' : '') + '</div>' +
+        '<div class="col"><b>Age/Sex:</b>' + age(p) + ' / ' + p.sex + '<br><b>ID:</b>' + p.id + '<br><b>Chart:</b>' + p.chart + '</div><div class="col"><b>Type:</b>' + (p.language === 'Spanish' ? 'SP' : 'IN') + '<br><b>First Visit:</b>' + fmtDate(p.firstVisit) + '<br><b>Last Visit:</b>' + (p.lastVisit ? fmtDate(p.lastVisit) : 'n/a') + '</div>' +
+        '<div class="col"><b>Responsible:</b>' + esc(r.name) + '<br><b>Balance:</b>$' + bal.toFixed(2) + '<br><b>Prim. Ins:</b>' + esc(p.ins.carrier) + '</div>';
+    } else { $('strip').style.display = 'none'; }
+    const titles = { scheduler: 'Daily View by user-view : DEFAULT', overview: 'Patient Overview', ledger: 'Account Ledger - Show All', chart: 'Restorative Chart', notes: 'Progress Notes', comms: 'Two Way Communications', regs: 'Online Registered Patients - New', elig: 'Insurance Eligibility' };
+    $('titlebar').innerHTML = '<span>' + titles[S.view] + '</span><span class="r">PGID :4100 / OID :' + S.office + '</span>';
+  }
+
+  // ---------- scheduler ----------
+  function apName(a) { if (a.pid) { const p = P(a.pid); return fullName(p) + ' [' + age(p) + '/' + p.sex + ']'; } return a.name; }
+  function renderScheduler() {
+    const off = D.OFFICES[S.office]; const h = D.hoursFor(S.office, S.date); const open = h ? h[0] : 8; const START = 8, END = 17; const rows = (END - START) * 4;
+    let html = '<div class="sbar"><button class="btn light" data-act="day" data-n="-1">&#9664; Prev</button><div class="dt">' + longDate(S.date) + '</div><button class="btn light" data-act="day" data-n="1">Next &#9654;</button><button class="btn light" data-act="today">Today</button><input type="date" id="dpick" value="' + S.date + '"><span style="margin-left:10px">Office: <b>' + off.name + '</b> &nbsp; Hours: <b>' + (h ? D.fmt12(D.fromMin(h[0] * 60)) + ' - ' + D.fmt12(D.fromMin(h[1] * 60)) : 'Closed') + '</b></span></div>';
+    html += '<div class="legend">' + Object.values(D.TYPES).map(t => '<span><i style="background:' + t.color + '"></i>' + t.label + '</span>').join('') + '<span><b>&#10003;</b> Confirmed</span></div>';
+    html += '<div class="sched"><div class="gridwrap"><div class="sg"><div class="tcol"><div class="hdr"></div>';
+    for (let r = 0; r < rows; r++) { const m = START * 60 + r * 15; html += '<div class="' + (m % 60 === 0 ? 'hr' : '') + '">' + (m % 60 === 0 ? D.fmt12(D.fromMin(m)).replace(':00', '') : '') + '</div>'; }
+    html += '</div>';
+    off.ops.forEach(op => {
+      const pv = D.PROVIDERS[op.prov]; html += '<div class="ocol" data-op="' + op.id + '"><div class="hdr">' + op.label + '<br>' + pv.short + (pv.minAge > 0 || pv.maxAge < 17 ? ' (' + pv.minAge + '-' + pv.maxAge + ')' : '') + '</div>';
+      for (let r = 0; r < rows; r++) { const m = START * 60 + r * 15; const closed = !h || m < h[0] * 60 || m >= h[1] * 60; html += '<div class="cell ' + (closed ? 'closed' : '') + ((m % 60 === 0) ? ' hr' : '') + '" ' + (closed ? '' : 'data-act="cell" data-op="' + op.id + '" data-t="' + D.fromMin(m) + '"') + '></div>'; }
+      state.appts.filter(a => a.office === S.office && a.date === S.date && a.op === op.id && a.status !== 'Cancelled').forEach(a => {
+        const top = 32 + (D.hm(a.start) - START * 60) / 15 * 20; const ht = a.dur / 15 * 20 - 2; const t = D.TYPES[a.type];
+        html += '<div class="ap ' + (S.sel === a.id ? 'sel ' : '') + (S.flash.includes(a.id) ? 'flash' : '') + '" style="top:' + top + 'px;height:' + ht + 'px;background:' + t.color + '" data-act="appt" data-id="' + a.id + '"><b>' + (a.status === 'Confirmed' ? '&#10003; ' : '') + esc(apName(a)) + '</b>' + D.fmt12(a.start) + ' ' + t.code + ' &middot; ' + esc(D.PROVIDERS[op.prov].short) + '</div>';
+      });
+      html += '</div>';
+    });
+    html += '</div></div>';
+    // side panel
+    const a = S.sel ? state.appts.find(x => x.id === S.sel) : null;
+    html += '<div class="sidep"><div class="ph">' + (a ? 'Appointment ' + a.id : 'Appointment Details') + '</div><div class="pb">';
+    if (!a) html += '<div style="color:#51657b">Click an appointment to see details. Search for a patient above, then click an open time to book.</div>';
+    else {
+      const t = D.TYPES[a.type]; const p = a.pid ? P(a.pid) : null; const op = D.OFFICES[a.office].ops.find(o => o.id === a.op);
+      html += '<div style="font-weight:bold;font-size:14px;color:#17406d">' + esc(apName(a)) + '</div><div style="margin:4px 0">' + shortDay(a.date) + ' &middot; ' + D.fmt12(a.start) + ' - ' + D.fmt12(D.fromMin(D.hm(a.start) + a.dur)) + ' (' + a.dur + ' min)</div><div>' + t.label + '</div><div>' + D.PROVIDERS[op.prov].name + ' &middot; ' + op.label + '</div><div style="margin:6px 0">' + statusPill(a.status) + '</div>';
+      if (a.updated && a.updated !== 'Seed') html += '<div class="ok" style="font-size:11px">Last updated ' + esc(a.updated) + '<br>by <b>' + esc(a.by) + '</b></div>';
+      if (a.note) html += '<div style="font-size:11px;background:#f4f8fc;border:1px solid #dbe6f2;padding:5px;margin:6px 0"><b>Note to office:</b> ' + esc(a.note) + '</div>';
+      if (p) {
+        html += '<div class="row" data-act="openpt" data-id="' + p.id + '">&#128100; Patient Overview</div><div class="row" data-act="gonotes" data-id="' + p.id + '">&#128221; Progress Notes</div><div class="row" data-act="gocomms" data-id="' + p.id + '">&#128172; Text Messages</div><div class="row" data-act="goelig" data-id="' + p.id + '">&#128737; Eligibility</div>';
+        if (p.alerts.length) html += '<div class="warn"><b>Medical Alerts:</b> ' + esc(p.alerts.join('; ')) + '</div>';
+        html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn grn" data-act="confirm" data-id="' + a.id + '">Confirm</button><button class="btn red" data-act="cancelm" data-id="' + a.id + '">Cancel Appt</button><button class="btn light" data-act="famm" data-pid="' + p.id + '">Family Appts</button></div>';
+      }
+    }
+    html += '</div></div></div>';
+    $('view').innerHTML = html;
+    const dp = $('dpick'); if (dp) dp.onchange = e => { S.date = e.target.value; render(); };
+    const f = document.querySelector('.ap.flash'); if (f) f.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+
+  // ---------- patient overview ----------
+  function apptRows(p) {
+    const list = state.appts.filter(a => a.pid === p.id).sort((x, y) => (x.date + x.start < y.date + y.start ? -1 : 1));
+    return list.map(a => '<tr class="' + (a.status === 'Cancelled' ? 'canc' : '') + '"><td><a data-act="gosched" data-id="' + a.id + '">' + fmtDate(a.date) + '</a></td><td>' + D.fmt12(a.start) + '</td><td>' + D.OFFICES[a.office].name.split(' ')[0].toUpperCase() + '</td><td>' + a.op + '</td><td>' + D.PROVIDERS[D.OFFICES[a.office].ops.find(o => o.id === a.op).prov].short + '</td><td>' + a.dur + '</td><td>' + statusPill(a.status) + '</td><td>' + esc(a.id) + (a.updated !== 'Seed' ? ' &middot; ' + esc(a.by) : '') + '</td></tr>').join('') || '<tr><td colspan="8" style="color:#6a7d92">No appointments</td></tr>';
+  }
+  function renderOverview() {
+    if (!S.pid) { $('view').innerHTML = '<div class="card"><div class="hd">Patient Overview</div><div style="padding:14px">Search for a patient in the toolbar to open their record. Try <a data-act="pickpt" data-id="4101">Whitfield, Owen</a>.</div></div>'; return; }
+    const p = P(S.pid); const r = state.resp[p.respId]; const ins = p.ins; const off = D.OFFICES[p.office];
+    const members = (p.members || [p.id]).filter(id => state.patients[id]);
+    const nextA = state.appts.filter(a => a.pid === p.id && a.status !== 'Cancelled' && a.date >= state.today).sort((x, y) => (x.date + x.start < y.date + y.start ? -1 : 1))[0];
+    const recalDue = p.lastVisit ? fmtDate(D.iso(D.addDays(D.parse(p.lastVisit), 183))) : '-';
+    const kv = (a, b, c, d, cls) => '<div class="k">' + a + '</div><div>' + (b || '') + '</div><div class="k">' + c + '</div><div class="' + (cls || '') + '">' + (d || '') + '</div>';
+    let h = '<div class="grid2"><div class="card"><div class="hd"><span>Patient Information</span><span class="btns"><button class="btn light dis">Launch Cloud 9</button><button class="btn light dis">Edit</button></span></div><div class="kv">' +
+      kv('Provider', D.PROVIDERS[p.provider].name, 'Referral Type', esc(p.referral)) + kv('Hygienist', D.PROVIDERS[p.hyg].name, 'Referred By', '') + kv('Home Office', off.name, 'Referred To', '') + kv('First Visit', fmtDate(p.firstVisit), 'Last Perio Chart', p.lastVisit ? fmtDate(p.lastVisit) : '') +
+      kv('Home', '', 'Contact Pref', 'Text') + kv('Work', '', 'Fee Schedule', 'UCR 2019') + kv('Address', esc(p.addr), 'Type', p.language === 'Spanish' ? 'SP' : 'IN') + kv('City, State, Zip', esc(p.city + ', ' + p.st + ' ' + p.zip), 'Preferred Language', esc(p.language)) +
+      kv('Patient Note', '', '', '') + kv('Medical Alerts', p.alerts.length ? esc(p.alerts.join(', ')) : 'None reported', 'Questionnaire', '<a>View</a>', '') + '</div></div>';
+    h += '<div><div class="card"><div class="hd"><span>Responsible Party</span><span class="btns"><button class="btn light dis">Edit</button></span></div><div class="kv">' + kv('Name', esc(r.name), 'Cell', r.cell) + kv('Resp ID', r.id, 'Email', esc(r.email)) + kv('Type', r.type, 'Home Office', esc(r.home)) + '</div></div>';
+    h += '<div class="card"><div class="hd">Dental Ins Pri / Sec</div><table class="t"><tr><th>Primary</th><th style="width:150px">Secondary</th></tr><tr><td><table class="mini"><tr><td>Carrier Name</td><td><a data-act="goelig" data-id="' + p.id + '">' + esc(ins.carrier) + '</a></td></tr><tr><td>Group #</td><td>' + esc(ins.group) + '</td></tr><tr><td>Carrier Phone</td><td>' + esc(ins.phone) + '</td></tr><tr><td>Subscriber (Rel)</td><td>' + esc(ins.subscriber + ' (' + ins.rel + ')') + '</td></tr><tr><td>Member ID</td><td>' + esc(ins.memberId) + '</td></tr>' + (ins.max ? '<tr><td>Indv. Max (Rem.)</td><td>$' + ins.max.toLocaleString() + '.00 ($' + ins.maxRem.toLocaleString() + '.00)</td></tr><tr><td>Indv. Ded. (Rem.)</td><td>$' + ins.ded + '.00 ($' + ins.dedRem + '.00)</td></tr>' : '<tr><td>Plan type</td><td>State Medicaid dental</td></tr>') + '</table></td><td style="color:#6a7d92">None on file</td></tr></table></div></div></div>';
+    h += '<div class="card"><div class="hd"><span>Account Members</span><span class="btns"><button class="btn light dis">+ Add New Member</button></span></div><table class="t"><tr><th>Member</th><th>Age / Sex</th><th>Next Visit</th><th>Next Recall</th><th>Sched Recall</th><th>Last Visit</th><th>Active</th></tr>' +
+      members.map(id => { const m = P(id); const na = state.appts.filter(a => a.pid === id && a.status !== 'Cancelled' && a.date >= state.today).sort((x, y) => (x.date + x.start < y.date + y.start ? -1 : 1))[0]; return '<tr><td><a data-act="pickpt" data-id="' + id + '">' + esc(m.last + ', ' + m.first) + '</a></td><td>' + age(m) + ' / ' + m.sex + '</td><td>' + (na ? fmtDate(na.date) : '-') + '</td><td>' + (m.lastVisit ? fmtDate(D.iso(D.addDays(D.parse(m.lastVisit), 183))) : '-') + '</td><td>' + (na ? fmtDate(na.date) : '-') + '</td><td>' + (m.lastVisit ? fmtDate(m.lastVisit) : '-') + '</td><td>Yes</td></tr>'; }).join('') + '</table></div>';
+    h += '<div class="card"><div class="tabs">' + ['SUMMARY', 'BALANCES', 'CONTRACTS', 'REFERRALS'].map(t => '<div class="' + (S.tab === t ? 'on' : '') + '" data-act="tab" data-t="' + t + '">' + t + '</div>').join('') + '</div></div>';
+    h += '<div class="grid2"><div class="card"><div class="hd"><span>Appointments</span><span class="btns"><button class="btn light dis">Archive Appt</button><button class="btn light" data-act="addm" data-pid="' + p.id + '">+ Add New Appt</button><button class="btn light" data-act="famm" data-pid="' + p.id + '">View Future Family Appt</button></span></div><table class="t"><tr><th>Appt Date</th><th>Appt Time</th><th>Office</th><th>Operatory</th><th>Provider</th><th>Duration</th><th>Status</th><th>Appt ID / Updated By</th></tr>' + apptRows(p) + '</table></div>';
+    h += '<div class="card"><div class="hd">Balances</div><table class="t"><tr><th>Member</th><th>Current</th><th>Over 30</th><th>Over 60</th><th>Balance</th><th>Est Pat</th><th>Est Ins</th></tr><tr><td>Account Balance</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td></tr></table></div></div>';
+    h += '<div class="grid2"><div class="card"><div class="hd"><span>Recalls</span><span class="btns"><button class="btn light dis">Edit</button></span></div><table class="t"><tr><th>Code</th><th>Interval</th><th>Recall Date</th><th>Reason</th><th>Sch Date</th><th>Sch Time</th></tr><tr><td>D1120</td><td>6 M</td><td>' + recalDue + '</td><td>Prophylaxis - Child</td><td>' + (nextA ? fmtDate(nextA.date) : '-') + '</td><td>' + (nextA ? D.fmt12(nextA.start) : '-') + '</td></tr><tr><td>D0120</td><td>6 M</td><td>' + recalDue + '</td><td>Periodic Oral Evaluation</td><td>-</td><td>-</td></tr></table></div>';
+    h += '<div class="card"><div class="hd">Billing</div><table class="t"><tr><th></th><th>Amount</th><th>Date</th></tr><tr><td>Last Pat Pay</td><td>$15.20</td><td>' + (p.lastVisit ? fmtDate(p.lastVisit) : '-') + '</td></tr><tr><td>Last Ins Pay</td><td>$132.80</td><td>' + (p.lastVisit ? fmtDate(p.lastVisit) : '-') + '</td></tr></table></div></div>';
+    $('view').innerHTML = h;
+  }
+  function renderLedger() {
+    if (!S.pid) return needPatient();
+    const p = P(S.pid); const rows = state.ledger[p.id] || [];
+    $('view').innerHTML = '<div class="card"><div class="hd"><span>Account Ledger - ' + esc(p.first + ' ' + p.last) + '</span><span class="btns"><button class="btn light dis">Patient Ledger</button><button class="btn light dis">Payment/Adjustments</button></span></div><table class="t"><tr><th>Date</th><th>Patient</th><th>Code</th><th>Description</th><th>Provider</th><th>Fee</th><th>Est Ins</th><th>Est Pat</th><th>Balance</th></tr>' +
+      rows.map(r => '<tr><td>' + fmtDate(r.d) + '</td><td>' + esc(p.first) + '</td><td>' + r.code + '</td><td>' + r.desc + '</td><td>' + r.prov + '</td><td>$' + r.fee.toFixed(2) + '</td><td>$' + r.ins.toFixed(2) + '</td><td>$' + r.pat.toFixed(2) + '</td><td>$' + r.bal.toFixed(2) + '</td></tr>').join('') + '</table></div>';
+  }
+  function needPatient() { $('view').innerHTML = '<div class="card"><div class="hd">No patient selected</div><div style="padding:14px">Use <b>Search Patient</b> in the toolbar (for example, type "Whitfield").</div></div>'; }
+  function renderChart() {
+    if (!S.pid) return needPatient();
+    const p = P(S.pid); const up = [], lo = [];
+    for (let i = 1; i <= 16; i++) up.push(i); for (let i = 32; i >= 17; i--) lo.push(i);
+    const t = (n) => '<div class="tooth ' + ([1, 16, 17, 32].includes(n) ? 'm' : '') + '"><div class="n">' + String(n).padStart(2, '0') + '</div><div class="cr"></div></div>';
+    $('view').innerHTML = '<div class="card"><div class="tabs"><div class="on">Restorative Chart</div><div>Perio Chart</div><div>X-Ray</div><div data-act="view" data-v="notes">Progress Notes</div><div>Treatment Plan</div><div>Medical History</div></div><div class="chart"><div style="margin-bottom:4px"><b>Pre-existing Conditions</b> &middot; Medical alerts: ' + (p.alerts.length ? '<span style="color:#c0281d;font-weight:bold">' + esc(p.alerts.join('; ')) + '</span>' : 'none') + '</div><div class="teeth">' + up.map(t).join('') + '</div><div class="teeth">' + lo.map(t).join('') + '</div><div style="color:#6a7d92">Chart shown for illustration. Clinical charting is not changed by the AI voice agent.</div></div></div>';
+  }
+  function renderNotes() {
+    if (!S.pid) return needPatient();
+    const p = P(S.pid);
+    $('view').innerHTML = '<div class="card"><div class="hd"><span>Progress Notes - ' + esc(p.first + ' ' + p.last) + '</span><span class="btns"><button class="btn light" data-act="addnote" data-id="' + p.id + '">+ Add Note</button></span></div><table class="t"><tr><th style="width:140px">Date / Time</th><th style="width:230px">Entered By</th><th>Note</th></tr>' +
+      (state.notes[p.id] || []).map(n => '<tr><td>' + esc(n.t) + '</td><td>' + esc(n.by) + '</td><td>' + esc(n.text) + '</td></tr>').join('') + '</table></div>';
+  }
+  function renderComms() {
+    const ids = Object.keys(state.sms).filter(id => (state.sms[id] || []).length);
+    if (!S.thread || !state.sms[S.thread]) S.thread = S.pid && state.sms[S.pid] && state.sms[S.pid].length ? S.pid : ids[0];
+    const th = S.thread; const p = P(th);
+    const last = id => { const m = state.sms[id]; return m[m.length - 1]; };
+    $('view').innerHTML = '<div class="cm"><div class="list"><div class="tabs"><div>Unread</div><div class="on">Inbox</div></div>' + ids.sort((a, b) => (last(a).t < last(b).t ? 1 : -1)).map(id => { const q = P(id); const m = last(id); return '<div class="th ' + (id === th ? 'on' : '') + '" data-act="thread" data-id="' + id + '"><b>' + esc(q.last + ', ' + q.first) + '</b> <span style="float:right;color:#6a7d92">' + m.t.slice(5, 10) + '</span><br><span style="color:#51657b">' + esc(m.text.slice(0, 44)) + '...</span></div>'; }).join('') +
+      '</div><div class="conv"><div style="border-bottom:1px solid #e4edf6;padding-bottom:6px;margin-bottom:6px"><b>' + esc(p.last + ', ' + p.first) + '</b> &middot; ' + state.resp[p.respId].cell + ' &middot; Responsible: ' + esc(state.resp[p.respId].name) + '</div>' +
+      state.sms[th].map(m => '<div class="msg ' + (m.dir === 'in' ? 'in' : '') + '"><small>' + esc(m.who) + ' - ' + esc(m.t) + '</small>' + esc(m.text) + '</div>').join('') + '<div class="comp"><input id="smsin" placeholder="Type a new SMS..."><button class="btn" data-act="sendsms" data-id="' + th + '">Send</button></div><div class="redtxt">Do not include private patient information in the message.</div></div></div>';
+  }
+  function renderRegs() {
+    $('view').innerHTML = '<div class="card"><div class="hd">Online Registered Patients - New</div><table class="t"><tr><th>Received</th><th>Reg ID</th><th>Patient</th><th>DOB</th><th>Responsible Party</th><th>Phone</th><th>Office</th><th>Source</th><th>Status</th><th></th></tr>' +
+      (state.regs.map(r => { const d = r.data; return '<tr><td>' + esc(r.received) + '</td><td>' + r.id + '<br><small>' + r.temp + '</small></td><td><a data-act="viewreg" data-id="' + r.id + '">' + esc(d.last + ', ' + d.first) + '</a></td><td>' + fmtDate(d.dob) + '</td><td>' + esc(d.respName) + '</td><td>' + d.cell + '</td><td>' + d.office + '</td><td>' + esc(r.source) + '</td><td>' + (r.status === 'Pending' ? '<span class="pill p-n">Pending</span>' : '<span class="pill p-c">Accepted</span>') + '</td><td>' + (r.status === 'Pending' ? '<button class="btn grn" data-act="acceptreg" data-id="' + r.id + '">Accept</button>' : '<a data-act="pickpt" data-id="' + r.pid + '">Open chart</a>') + '</td></tr>'; }).join('') || '<tr><td colspan="10" style="color:#6a7d92;padding:14px">No online registrations waiting. New patients entered by the voice agent appear here for front-desk review.</td></tr>') + '</table></div>';
+  }
+  function renderElig() {
+    if (!S.pid) return needPatient();
+    const p = P(S.pid); const i = p.ins; const ortho = i.orthoMax;
+    $('view').innerHTML = '<div class="card"><div class="hd"><span>Insurance Eligibility - ' + esc(p.first + ' ' + p.last) + '</span><span class="btns"><button class="btn light" data-act="runelig" data-id="' + p.id + '">Run Real-Time Eligibility</button></span></div><div style="padding:10px"><div class="ok"><b>Status: ACTIVE</b> &nbsp; Last checked ' + state.today + ' 06:05 AM (automatic eligibility, upcoming appointments)</div><div class="grid2"><table class="t"><tr><th colspan="2">Plan</th></tr><tr><td>Carrier</td><td>' + esc(i.carrier) + '</td></tr><tr><td>Group</td><td>' + esc(i.group) + '</td></tr><tr><td>Subscriber</td><td>' + esc(i.subscriber) + ' (' + i.rel + ')</td></tr><tr><td>Member ID</td><td>' + esc(i.memberId) + '</td></tr><tr><td>Effective</td><td>01/01/2026</td></tr></table>' +
+      '<table class="t"><tr><th colspan="2">Benefits</th></tr><tr><td>Preventive (D1120, D0120, D1206)</td><td>100%</td></tr><tr><td>Basic (fillings, sealants)</td><td>80%</td></tr><tr><td>Major</td><td>50%</td></tr><tr><td>Annual max (remaining)</td><td>' + (i.max ? '$' + i.max.toLocaleString() + ' ($' + i.maxRem.toLocaleString() + ')' : 'No annual max') + '</td></tr><tr><td>Deductible (remaining)</td><td>$' + i.ded + ' ($' + i.dedRem + ')</td></tr>' + (ortho ? '<tr><td>Orthodontia</td><td>' + i.orthoPct + '% to age ' + i.orthoAge + ' &middot; lifetime max $' + i.orthoMax.toLocaleString() + ' (remaining $' + i.orthoRem.toLocaleString() + ')</td></tr>' : '') + '</table></div></div></div>';
+  }
+
+  // ---------- modals ----------
+  function nextDays(n) { const out = []; let d = D.parse(state.today); while (out.length < n) { if (d.getDay() >= 1 && d.getDay() <= 5) out.push(D.iso(d)); d = D.addDays(d, 1); } return out; }
+  let AM = null;
+  function addModal(pid, pre) {
+    const p = P(pid); AM = { pid, type: 'REC', date: (pre && pre.date) || nextDays(1)[0], office: p.office, slot: null, pre };
+    drawAdd();
+  }
+  function drawAdd() {
+    const p = P(AM.pid); const a = age(p);
+    const slots = D.freeSlots(state, AM.office, AM.date, AM.type, a, AM.prov || undefined);
+    const provs = Object.values(D.PROVIDERS).filter(v => D.OFFICES[AM.office].ops.some(o => o.prov === v.id && D.TYPES[AM.type].kind === o.kind));
+    const bad = provs.filter(v => a < v.minAge || a > v.maxAge);
+    modal('Add New Appointment - ' + esc(p.first + ' ' + p.last) + ' (age ' + a + ')',
+      '<div class="fld"><label>Appointment type</label><select id="am-type">' + Object.values(D.TYPES).map(t => '<option value="' + t.code + '"' + (t.code === AM.type ? ' selected' : '') + '>' + t.label + ' (' + t.dur + ' min)</option>').join('') + '</select></div>' +
+      '<div class="fld"><label>Office</label><select id="am-off">' + Object.values(D.OFFICES).map(o => '<option value="' + o.id + '"' + (o.id === AM.office ? ' selected' : '') + '>' + o.name + '</option>').join('') + '</select></div>' +
+      '<div class="fld"><label>Date</label><select id="am-date">' + nextDays(12).map(d => '<option value="' + d + '"' + (d === AM.date ? ' selected' : '') + '>' + shortDay(d) + '</option>').join('') + '</select></div>' +
+      '<div class="fld"><label>Provider</label><select id="am-prov"><option value="">Any eligible provider</option>' + provs.map(v => '<option value="' + v.id + '"' + (AM.prov === v.id ? ' selected' : '') + (a < v.minAge || a > v.maxAge ? ' disabled' : '') + '>' + v.name + (v.minAge > 0 || v.maxAge < 17 ? ' (ages ' + v.minAge + '-' + v.maxAge + ')' : '') + '</option>').join('') + '</select></div>' +
+      (bad.length ? '<div class="warn">Age rule: ' + bad.map(v => esc(v.name) + ' sees ages ' + v.minAge + '-' + v.maxAge).join('; ') + '. Only age-eligible providers show open times for this patient.</div>' : '') +
+      '<div><b>Open times</b> (' + slots.length + ')</div><div class="slots">' + (slots.slice(0, 36).map((s, i) => '<div class="slot ' + (AM.slot === i ? 'on' : '') + '" data-act="pickslot" data-i="' + i + '">' + D.fmt12(s.start) + '<br>' + D.PROVIDERS[s.prov].short + ' &middot; ' + s.op + '</div>').join('') || '<div class="warn">No open times for this selection.</div>') + '</div>' +
+      '<div class="fld"><label>Note to office</label><textarea id="am-note" rows="2" maxlength="3950" placeholder="Visible to the front desk (up to 3,950 characters)"></textarea></div>',
+      '<button class="btn light" data-act="closeModal">Close</button><button class="btn grn" data-act="bookslot">Book Appointment</button>');
+    AM.slots = slots.slice(0, 36);
+    $('am-type').onchange = e => { AM.type = e.target.value; AM.slot = null; drawAdd(); };
+    $('am-off').onchange = e => { AM.office = e.target.value; AM.slot = null; AM.prov = ''; drawAdd(); };
+    $('am-date').onchange = e => { AM.date = e.target.value; AM.slot = null; drawAdd(); };
+    $('am-prov').onchange = e => { AM.prov = e.target.value; AM.slot = null; drawAdd(); };
+  }
+  function cancelModal(id) {
+    const a = state.appts.find(x => x.id === id); const p = a.pid ? P(a.pid) : null;
+    modal('Cancel Appointment ' + id, '<div class="fld"><label>Patient</label><div>' + esc(apName(a)) + ' &middot; ' + shortDay(a.date) + ' ' + D.fmt12(a.start) + '</div></div><div class="fld"><label>Cancellation code</label><select id="cx-code">' + D.CANCEL_CODES.map(c => '<option>' + c + '</option>').join('') + '</select></div><div class="fld"><label>Note</label><textarea id="cx-note" rows="2"></textarea></div><div class="fld"><label></label><label style="width:auto;font-weight:normal"><input type="checkbox" id="cx-sms" checked style="flex:none"> Send confirmation text to responsible party</label></div>',
+      '<button class="btn light" data-act="closeModal">Close</button><button class="btn red" data-act="docancel" data-id="' + id + '">Cancel Appointment</button>');
+  }
+  let FM = null;
+  function famModal(pid) {
+    const p = P(pid); const ids = (p.members || [pid]).filter(i => state.patients[i]);
+    const list = state.appts.filter(a => ids.includes(a.pid) && a.status !== 'Cancelled' && a.date >= state.today).sort((x, y) => (x.date + x.start < y.date + y.start ? -1 : 1));
+    FM = { sel: list.map(a => a.id), date: D.iso(D.resolveDay('nextThu', D.parse(state.today))), pick: null, list };
+    drawFam();
+  }
+  function famPlans() {
+    // find start times where every selected appt has a free chair (distinct chairs)
+    const appts = FM.list.filter(a => FM.sel.includes(a.id)); if (!appts.length) return [];
+    const per = appts.map(a => { const pt = P(a.pid); return D.freeSlots(state, a.office, FM.date, a.type, age(pt)); });
+    const times = per[0].map(s => s.start).filter((t, i, arr) => arr.indexOf(t) === i).filter(t => per.every(list => list.some(s => s.start === t)));
+    return times.map(t => { const used = []; const asg = []; let ok = true; appts.forEach((a, i) => { const c = per[i].find(s => s.start === t && !used.includes(s.office + s.op)); if (!c) { ok = false; return; } used.push(c.office + c.op); asg.push({ appt: a, slot: c }); }); return ok ? { t, asg } : null; }).filter(Boolean);
+  }
+  function drawFam() {
+    const plans = famPlans();
+    modal('Future Family Appointments', '<table class="t"><tr><th></th><th>Patient</th><th>Date</th><th>Time</th><th>Type</th><th>Status</th></tr>' + FM.list.map(a => '<tr><td><input type="checkbox" data-act="famsel" data-id="' + a.id + '" ' + (FM.sel.includes(a.id) ? 'checked' : '') + '></td><td>' + esc(apName(a)) + '</td><td>' + shortDay(a.date) + '</td><td>' + D.fmt12(a.start) + '</td><td>' + D.TYPES[a.type].code + '</td><td>' + statusPill(a.status) + '</td></tr>').join('') + '</table>' +
+      '<div class="fld" style="margin-top:10px"><label>Move selected to</label><select id="fm-date">' + nextDays(14).map(d => '<option value="' + d + '"' + (d === FM.date ? ' selected' : '') + '>' + shortDay(d) + '</option>').join('') + '</select></div><div><b>Times that fit every selected appointment</b></div><div class="slots">' +
+      (plans.map((pl, i) => '<div class="slot ' + (FM.pick === i ? 'on' : '') + '" data-act="fampick" data-i="' + i + '">' + D.fmt12(pl.t) + '<br>' + pl.asg.map(x => x.slot.op).join(' + ') + '</div>').join('') || '<div class="warn">No common time. Try another day.</div>') + '</div><div class="warn">Each move books the new time first, then cancels the old one, so the family never loses a slot.</div>',
+      '<button class="btn light" data-act="closeModal">Close</button><button class="btn grn" data-act="famapply">Move Selected Appointments</button>');
+    FM.plans = plans; $('fm-date').onchange = e => { FM.date = e.target.value; FM.pick = null; drawFam(); };
+  }
+
+  // ---------- demo drawer ----------
+  function drawer() {
+    const t = D.parse(state.today);
+    const keys = ['today', 'tomorrow', 'nextMon', 'nextTue', 'nextWed', 'nextThu', 'nextFri'];
+    $('drawer').innerHTML = '<div class="dh"><span>Demo controls (test data)</span><span style="cursor:pointer" data-act="drawer">X</span></div><div class="db"><div class="warn">This is a Denticon-style demo environment with simulated test data. It follows the shape of the published Denticon API. It is not connected to production Denticon.</div>' +
+      '<h4>Apply the result of a demo call</h4><div style="display:flex;flex-wrap:wrap;gap:6px">' + [[1, 'S1 Family reschedule'], [2, 'S2 New patient'], [3, 'S3 Spanish confirm'], [4, 'S4 Emergency'], [5, 'S5 Live agent'], [6, 'S6 After-hours cancel'], [7, 'S7 FAQ gap'], [8, 'S8 Warm transfer']].map(s => '<button class="btn ' + (state.applied.includes(String(s[0])) ? 'grn' : 'light') + '" data-act="applysc" data-n="' + s[0] + '">' + s[1] + '</button>').join('') + '</div>' +
+      '<div style="margin-top:8px"><button class="btn red" data-act="resetall">Reset all demo data</button> <button class="btn light" data-act="datacheck">Run data check</button></div><pre id="dcheck" style="display:none"></pre>' +
+      '<h4>Date cheat sheet (what the AI says vs. what you see)</h4><table class="mini">' + keys.map(k => '<tr><td><b>' + k + '</b></td><td>' + longDate(D.iso(D.resolveDay(k, t))) + '</td></tr>').join('') + '</table>' +
+      '<h4>API activity (illustrative payloads)</h4>' + (state.apiLog.length ? '<table class="mini">' + state.apiLog.slice(0, 14).map(l => '<tr><td>' + l.t + '</td><td><b>' + esc(l.name) + '</b><pre>' + esc(JSON.stringify(l.params, null, 1)) + '\n=> ' + esc(JSON.stringify(l.result)) + '</pre></td></tr>').join('') + '</table>' : '<div style="color:#6a7d92">No calls yet. Actions you take here, or results you apply, show the API calls an integration would make.</div>') + '</div>';
+  }
+  function dataCheck() {
+    const T = D.parse(state.today); const out = []; const day = D.iso(D.resolveDay('nextThu', T));
+    ['15:30', '16:15'].forEach(tm => ['H1', 'H2'].forEach(op => out.push('Family slot ' + tm + ' ' + op + ': ' + (D.isFree(state, '101', day, op, tm, 45) ? 'free' : 'TAKEN'))));
+    const tue = D.iso(D.resolveDay('nextTue', T)); const sl = D.freeSlots(state, '102', tue, 'NPE', 5);
+    ['09:00', '10:30', '14:00'].forEach(tm => out.push('Nair new-patient slot ' + tm + ': ' + (sl.some(x => x.start === tm && x.op === 'OP1') ? 'free' : 'TAKEN')));
+    out.push('Emergency slot today 11:30 EMG: ' + (D.isFree(state, '101', state.today, 'EMG', '11:30', 30) ? 'free' : 'TAKEN'));
+    out.push('Age-5 slots only with Dr. Nair: ' + (sl.every(x => x.prov === 'nair') ? 'yes' : 'NO'));
+    const pre = $('dcheck'); pre.style.display = 'block'; pre.textContent = out.join('\n');
+  }
+
+  // ---------- events ----------
+  function go(v, pid) { S.view = v; if (pid) { S.pid = pid; S.office = P(pid).office; } render(); }
+  document.addEventListener('click', e => {
+    const el = e.target.closest('[data-act]'); if (!el) { const r = $('results'); if (r && !e.target.closest('#searchbox')) r.style.display = 'none'; return; }
+    const act = el.dataset.act; const id = el.dataset.id;
+    switch (act) {
+      case 'na': toast('Not part of this demo.'); break;
+      case 'view': S.view = el.dataset.v; render(); break;
+      case 'pickpt': S.pid = id; S.office = P(id).office; S.view = (S.view === 'scheduler' || S.view === 'regs') ? 'overview' : S.view; if (S.view === 'comms') S.thread = id; closeModal(); render(); break;
+      case 'openpt': go('overview', id); break;
+      case 'gonotes': go('notes', id); break; case 'gocomms': S.thread = id; go('comms', id); break; case 'goelig': go('elig', id); break;
+      case 'gosched': { const a = state.appts.find(x => x.id === id); S.date = a.date; S.office = a.office; S.sel = id; S.view = 'scheduler'; render(); break; }
+      case 'day': { let d = D.parse(S.date); const n = +el.dataset.n; do { d = D.addDays(d, n); } while (d.getDay() === 0 || d.getDay() === 6); S.date = D.iso(d); render(); break; }
+      case 'today': S.date = state.today; render(); break;
+      case 'appt': S.sel = id; S.flash = S.flash.filter(x => x === id); { const a = state.appts.find(x => x.id === id); if (a && a.pid) S.pid = a.pid; } render(); break;
+      case 'cell': if (!S.pid) { toast('Search for a patient first, then click an open time.'); break; } addModal(S.pid, { date: S.date }); AM.office = S.office; AM.date = S.date; { const op = D.OFFICES[S.office].ops.find(o => o.id === el.dataset.op); AM.type = op.kind === 'hyg' ? 'REC' : op.kind === 'emg' ? 'EMG' : 'NPE'; } drawAdd(); break;
+      case 'tab': S.tab = el.dataset.t; render(); break;
+      case 'addm': addModal(el.dataset.pid); break;
+      case 'pickslot': AM.slot = +el.dataset.i; drawAdd(); break;
+      case 'bookslot': {
+        if (AM.slot == null) { toast('Pick an open time first.'); break; }
+        const s = AM.slots[AM.slot]; const a = D.bookAppt(state, { pid: AM.pid, office: s.office, date: s.date, start: s.start, op: s.op, type: s.type, by: 'Front Desk (Denticon user)', note: ($('am-note').value || '') });
+        save(); closeModal(); S.flash = [a.id]; S.sel = a.id; S.date = a.date; S.office = a.office; S.view = 'scheduler'; render(); toast('Appointment ' + a.id + ' booked.'); break; }
+      case 'confirm': D.confirmAppt(state, id, 'Front Desk (Denticon user)'); save(); S.flash = [id]; render(); toast('Appointment ' + id + ' confirmed.'); break;
+      case 'cancelm': cancelModal(id); break;
+      case 'docancel': { const a = state.appts.find(x => x.id === id); D.cancelAppt(state, id, $('cx-code').value, $('cx-note').value, 'Front Desk (Denticon user)'); if ($('cx-sms').checked && a.pid) D.addSms(state, a.pid, D.OFFICES[a.office].name + ': your appointment is cancelled. Call us any time to rebook. Reply STOP to end.', 'Denticon Messaging'); save(); closeModal(); S.sel = null; render(); toast('Appointment cancelled.'); break; }
+      case 'famm': famModal(el.dataset.pid); break;
+      case 'famsel': FM.sel = el.checked ? FM.sel.concat(id) : FM.sel.filter(x => x !== id); FM.pick = null; drawFam(); break;
+      case 'fampick': FM.pick = +el.dataset.i; drawFam(); break;
+      case 'famapply': {
+        if (FM.pick == null || !FM.plans[FM.pick]) { toast('Pick a time that fits everyone.'); break; }
+        const ids = FM.plans[FM.pick].asg.map(x => D.reschedule(state, x.appt.id, x.slot, 'Front Desk (Denticon user)', 'Family reschedule: same day, same time.').id); save(); closeModal(); S.flash = ids; S.date = FM.date; S.office = FM.plans[FM.pick].asg[0].slot.office; S.view = 'scheduler'; render(); toast('Moved ' + ids.length + ' appointments. New IDs: ' + ids.join(', ')); break; }
+      case 'addnote': { const t = prompt('Progress note'); if (t) { D.addNote(state, id, t, 'Front Desk (Denticon user)'); save(); render(); } break; }
+      case 'thread': S.thread = id; render(); break;
+      case 'sendsms': { const v = $('smsin').value.trim(); if (v) { D.addSms(state, id, v, 'Front Desk (Denticon user)'); save(); render(); } break; }
+      case 'viewreg': { const r = state.regs.find(x => x.id === id); const d = r.data; modal('Online registration ' + r.id, '<table class="t"><tr><th colspan="2">Patient</th></tr><tr><td>Name</td><td>' + esc(d.first + ' ' + d.last) + '</td></tr><tr><td>DOB / Sex</td><td>' + fmtDate(d.dob) + ' / ' + d.sex + '</td></tr><tr><td>Address</td><td>' + esc(d.addr + ', ' + d.city + ', ' + d.st + ' ' + d.zip) + '</td></tr><tr><td>Referral source</td><td>' + esc(d.referral) + '</td></tr><tr><td>Preferred language</td><td>' + d.language + '</td></tr><tr><th colspan="2">Responsible party</th></tr><tr><td>Name / Cell</td><td>' + esc(d.respName) + ' / ' + d.cell + '</td></tr><tr><td>Email</td><td>' + esc(d.email) + '</td></tr><tr><th colspan="2">Dental insurance (primary)</th></tr><tr><td>Carrier / Group</td><td>' + esc(d.ins.carrier) + ' / ' + d.ins.group + '</td></tr><tr><td>Subscriber / Member ID</td><td>' + esc(d.ins.subscriber) + ' (' + d.ins.rel + ') / ' + d.ins.memberId + '</td></tr></table><div class="warn">Entered by: ' + esc(r.source) + '. Front desk reviews and accepts to create the chart.</div>', '<button class="btn light" data-act="closeModal">Close</button>'); break; }
+      case 'acceptreg': { const pid = D.acceptReg(state, id); save(); S.pid = pid; S.office = P(pid).office; S.view = 'overview'; render(); toast('Registration accepted. Patient ' + pid + ' created.'); break; }
+      case 'runelig': D.log ? 0 : 0; state.apiLog.unshift({ t: new Date().toLocaleTimeString(), name: 'Eligibility 270/271 (clearinghouse)', params: { MemberID: P(id).ins.memberId, Carrier: P(id).ins.carrier }, result: { Active: true } }); save(); toast('Eligibility refreshed: ACTIVE.'); render(); break;
+      case 'closeModal': closeModal(); break;
+      case 'drawer': $('drawer').classList.toggle('on'); drawer(); break;
+      case 'applysc': { const n = el.dataset.n; if (state.applied.includes(n)) { toast('Already applied. Use Reset to run it again.'); break; } const ids = D.applyScenario(state, +n); state.applied.push(n); save(); S.flash = ids || []; if (+n === 2) { S.view = 'regs'; } else if (ids && ids.length) { const a = state.appts.find(x => x.id === ids[0]); S.date = a.date; S.office = a.office; S.view = 'scheduler'; S.sel = ids[0]; } render(); drawer(); toast('Scenario ' + n + ' result applied.'); break; }
+      case 'resetall': reset(); S.sel = null; S.flash = []; S.view = 'scheduler'; S.date = state.today; S.pid = null; render(); drawer(); toast('Demo data reset.'); break;
+      case 'datacheck': dataCheck(); break;
+    }
+  });
+  $('modalbg').addEventListener('click', e => { if (e.target.id === 'modalbg') closeModal(); });
+  function render() {
+    renderChrome();
+    ({ scheduler: renderScheduler, overview: renderOverview, ledger: renderLedger, chart: renderChart, notes: renderNotes, comms: renderComms, regs: renderRegs, elig: renderElig }[S.view] || renderScheduler)();
+    if ($('drawer').classList.contains('on')) drawer();
+    save();
+  }
+  init(); render();
+  window.D4CDEMO = { state: () => state, S };
+})();
+</script>
+</body></html>
